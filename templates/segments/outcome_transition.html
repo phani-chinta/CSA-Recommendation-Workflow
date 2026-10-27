@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %}Update action · Signal Desk{% endblock %}
+{% block content %}
+<nav class="breadcrumb" aria-label="Breadcrumb"><a href="{% url 'evaluation' %}#action-log">Evaluation</a><svg class="icon"><use href="#i-arrow"/></svg><span>{{ outcome.id }}</span></nav>
+<section class="page-heading"><div class="page-heading-copy"><div class="eyebrow"><svg class="icon icon-sm"><use href="#i-spark"/></svg>Audited action</div><h1 class="title">Update recommendation</h1><p class="page-description">Record the next step in this action’s lifecycle. Every change is retained with its actor, time, and notes.</p></div><span class="status status-{{ outcome.status }}">{{ outcome.get_status_display }}</span></section>
+<div class="profile-layout">
+  <section class="panel">
+    <div class="section-heading"><div><h2 class="section-title">Action details</h2><p class="section-subtitle">Frozen recommendation context</p></div></div>
+    <div class="detail-list"><div class="detail-row"><span>Recommendation</span><strong class="table-id">{{ outcome.id }}</strong></div><div class="detail-row"><span>Customer</span><strong><a href="{% url 'customer_detail' outcome.customer_id %}">{{ outcome.customer.first_name }} {{ outcome.customer.last_name }}</a></strong></div><div class="detail-row"><span>Email</span><strong>{{ outcome.customer.email }}</strong></div><div class="detail-row"><span>Action</span><strong>{{ outcome.action_snapshot.name|default:outcome.action.name }}</strong></div><div class="detail-row"><span>Channel</span><strong>{{ outcome.action_snapshot.channel|default:outcome.action.channel|title }}</strong></div><div class="detail-row"><span>Recommended</span><strong>{{ outcome.recommended_at|date:"M j, Y · H:i" }}</strong></div></div>
+  </section>
+  <section class="panel">
+    <div class="section-heading"><div><h2 class="section-title">Record transition</h2><p class="section-subtitle">Consent is checked before marking an action sent.</p></div></div>
+    <form method="post">{% csrf_token %}{{ form.non_field_errors }}
+      <div class="form-field"><label for="{{ form.to_status.id_for_label }}">Next state</label>{{ form.to_status }}{{ form.to_status.errors }}</div>
+      <div class="form-field"><label for="{{ form.notes.id_for_label }}">Notes</label>{{ form.notes }}<p class="form-help">Add context for the delivery or outcome record.</p>{{ form.notes.errors }}</div>
+      <div class="form-field"><label for="{{ form.revenue.id_for_label }}">Attributed revenue</label>{{ form.revenue }}<p class="form-help">Required when recording a conversion.</p>{{ form.revenue.errors }}</div>
+      <div class="form-actions"><a class="button secondary" href="{% url 'evaluation' %}#action-log">Cancel</a><button type="submit">Save transition <svg class="icon icon-sm"><use href="#i-check"/></svg></button></div>
+    </form>
+  </section>
+</div>
+<section class="section panel">
+  <div class="section-heading"><div><h2 class="section-title">Decision history</h2><p class="section-subtitle">Append-only record of this action</p></div></div>
+  <ul class="timeline">{% for event in outcome.events.all %}<li class="timeline-item"><span class="timeline-dot"></span><div class="timeline-title">{{ event.from_status|default:"Created" }} → {{ event.to_status }}</div><div class="timeline-meta">{{ event.changed_at|date:"M j, Y · H:i" }}{% if event.actor_label %} · {{ event.actor_label }}{% endif %}</div>{% if event.notes %}<p class="timeline-copy">{{ event.notes }}</p>{% endif %}</li>{% empty %}<li class="timeline-item"><span class="timeline-dot"></span><div class="timeline-title">No events recorded</div></li>{% endfor %}</ul>
+</section>
+{% endblock %}

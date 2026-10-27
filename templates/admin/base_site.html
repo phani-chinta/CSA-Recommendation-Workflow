@@ -1,0 +1,7 @@
+{% extends "admin/base.html" %}
+{% load static %}
+{% block title %}{{ title }} | Signal Desk{% endblock %}
+{% block branding %}
+<h1 id="site-name"><a href="{% url 'admin:index' %}"><span class="admin-brand-mark" aria-hidden="true"></span><span>Signal Desk</span><small>Administration</small></a></h1>
+{% endblock %}
+{% block extrastyle %}{{ block.super }}<link rel="stylesheet" href="{% static 'segments/admin.css' %}">{% endblock %}

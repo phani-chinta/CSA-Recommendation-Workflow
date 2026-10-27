@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% block title %}Overview · Signal Desk{% endblock %}
+{% block content %}
+<section class="page-heading">
+  <div class="page-heading-copy">
+    <div class="eyebrow"><svg class="icon icon-sm"><use href="#i-spark"/></svg>Decision workspace</div>
+    <h1 class="title">Good work starts with a clear signal.</h1>
+    <p class="page-description">Customer segments, consent-aware actions, and measurable outcomes—together in one place.</p>
+  </div>
+  <div class="actions">
+    {% if perms.segments.run_segmentation %}<form method="post" action="{% url 'actions' %}">{% csrf_token %}<input type="hidden" name="operation" value="segment"><button type="submit"><svg class="icon icon-sm"><use href="#i-target"/></svg>Rebuild segments</button></form>{% endif %}
+    {% if perms.segments.run_recommendations %}<form method="post" action="{% url 'actions' %}">{% csrf_token %}<input type="hidden" name="operation" value="recommend"><button class="button secondary" type="submit"><svg class="icon icon-sm"><use href="#i-spark"/></svg>Run recommendations</button></form>{% endif %}
+  </div>
+</section>
+
+<section class="grid" aria-label="Workspace metrics">
+  <article class="card metric-card"><div class="metric-top"><span class="metric-label">Customers</span><span class="metric-icon"><svg class="icon"><use href="#i-users"/></svg></span></div><strong class="metric">{{ customers|default:0 }}</strong><div class="metric-foot">Profiles in this workspace</div></article>
+  {% if perms.segments.view_actionoutcome %}
+  <article class="card metric-card accent-blue"><div class="metric-top"><span class="metric-label">Action records</span><span class="metric-icon"><svg class="icon"><use href="#i-spark"/></svg></span></div><strong class="metric">{{ metrics.recommendations|default:0 }}</strong><div class="metric-foot">Recommendations and decisions</div></article>
+  <article class="card metric-card accent-yellow"><div class="metric-top"><span class="metric-label">Conversion rate</span><span class="metric-icon"><svg class="icon"><use href="#i-target"/></svg></span></div><strong class="metric">{{ metrics.conversion_rate|floatformat:1 }}%</strong><div class="metric-foot">Of actions marked sent</div></article>
+  <article class="card metric-card accent-purple"><div class="metric-top"><span class="metric-label">Attributed revenue</span><span class="metric-icon"><svg class="icon"><use href="#i-orders"/></svg></span></div><strong class="metric">&#36;{{ metrics.attributed_revenue|floatformat:2 }}</strong><div class="metric-foot">From recorded conversions</div></article>
+  <article class="card metric-card accent-red"><div class="metric-top"><span class="metric-label">Suppressed</span><span class="metric-icon"><svg class="icon"><use href="#i-check"/></svg></span></div><strong class="metric">{{ metrics.suppressed|default:0 }}</strong><div class="metric-foot">Held by consent or cooldown rules</div></article>
+  {% endif %}
+</section>
+
+<section class="dashboard-grid section">
+  <article class="panel">
+    <div class="section-heading">
+      <div><h2 class="section-title">Current segment mix</h2><p class="section-subtitle">Customer distribution across active rules</p></div>
+      {% if perms.segments.view_segmentmembership %}<a class="button secondary button-sm" href="{% url 'export_data' 'memberships' %}"><svg class="icon icon-sm"><use href="#i-download"/></svg>Export</a>{% endif %}
+    </div>
+    <div class="chart-list" role="img" aria-label="Horizontal bar chart showing customers in each current segment">
+      {% for s in segments %}
+        {% widthratio s.n customers 100 as segment_pct %}
+        <div class="chart-row"><span class="chart-label">{{ s.name }}</span><span class="chart-track"><span class="chart-fill" style="--bar:{{ segment_pct }}%"></span></span><span class="chart-value">{{ s.n }}</span></div>
+      {% empty %}
+        <div class="table-empty"><span class="empty-icon"><svg class="icon"><use href="#i-empty"/></svg></span><div class="empty-title">No segment rules yet</div><div class="empty-copy">Add active rules in the admin console to begin.</div></div>
+      {% endfor %}
+    </div>
+    <div class="chart-legend"><span class="legend-item"><span class="legend-dot"></span>Current customers</span><span>Bar length shows share of all customers</span></div>
+  </article>
+  <aside class="panel insight-panel">
+    <div>
+      <span class="insight-icon"><svg class="icon"><use href="#i-spark"/></svg></span>
+      <h3>Explain every decision.</h3>
+      <p>Each segment and action keeps the rule snapshot, consent decision, and outcome history behind it.</p>
+    </div>
+    <div class="insight-bottom"><span class="status-dot"></span>Consent checks run before every send</div>
+  </aside>
+</section>
+
+<section class="section">
+  <div class="section-heading"><div><h2 class="section-title">Workflow activity</h2><p class="section-subtitle">Recent segmentation and recommendation jobs</p></div></div>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Run</th><th>Workflow</th><th>Status</th><th>Requested</th><th>Summary</th></tr></thead>
+    <tbody>
+      {% for run in runs %}<tr><td class="table-id">{{ run.id|slice:":8" }}</td><td class="table-primary">{{ run.get_operation_display }}</td><td><span class="status status-{{ run.status }}">{{ run.get_status_display }}</span></td><td>{{ run.requested_at|date:"M j, Y · H:i" }}</td><td>{% if run.error %}<span class="status status-failed">{{ run.error|truncatechars:52 }}</span>{% elif run.result %}{{ run.result }}{% else %}<span class="muted">Waiting for worker</span>{% endif %}</td></tr>
+      {% empty %}<tr><td colspan="5"><div class="table-empty"><span class="empty-icon"><svg class="icon"><use href="#i-clock"/></svg></span><div class="empty-title">No workflow runs yet</div><div class="empty-copy">Run segmentation or recommendations to see activity here.</div></div></td></tr>{% endfor %}
+    </tbody>
+  </table></div>
+</section>
+
+{% if perms.segments.view_actionoutcome %}
+<section class="section">
+  <div class="section-heading"><div><h2 class="section-title">Recent recommendations</h2><p class="section-subtitle">Latest customer actions and their current state</p></div><a class="button tertiary button-sm" href="{% url 'evaluation' %}">View evaluation <svg class="icon icon-sm"><use href="#i-arrow"/></svg></a></div>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Customer</th><th>Action</th><th>Created</th><th>Status</th><th>Decision</th></tr></thead>
+    <tbody>
+      {% for x in recent %}<tr><td><a class="table-primary" href="{% url 'customer_detail' x.customer_id %}">{{ x.customer_id }}</a></td><td>{{ x.action.name }}</td><td>{{ x.recommended_at|date:"M j, Y · H:i" }}</td><td><span class="status status-{{ x.status }}">{{ x.get_status_display }}</span></td><td>{% if x.suppression_reason %}<span class="muted">{{ x.suppression_reason }}</span>{% else %}<span class="muted">Eligible</span>{% endif %}</td></tr>
+      {% empty %}<tr><td colspan="5"><div class="table-empty"><span class="empty-icon"><svg class="icon"><use href="#i-spark"/></svg></span><div class="empty-title">No recommendations yet</div><div class="empty-copy">Your latest decisions will appear here.</div></div></td></tr>{% endfor %}
+    </tbody>
+  </table></div>
+</section>
+{% endif %}
+{% endblock %}

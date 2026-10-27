@@ -1,0 +1,9 @@
+__pycache__/
+*.py[cod]
+*.sqlite3
+.venv/
+.env
+data/generated/
+data/repro_*/
+data/full-scale-check/
+staticfiles/

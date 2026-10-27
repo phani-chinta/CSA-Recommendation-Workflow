@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% block title %}{{ c.first_name }} {{ c.last_name }} · Signal Desk{% endblock %}
+{% block content %}
+<nav class="breadcrumb" aria-label="Breadcrumb"><a href="{% url 'customers' %}">Customers</a><svg class="icon"><use href="#i-arrow"/></svg><span>{{ c.id }}</span></nav>
+<section class="card profile-hero">
+  <span class="avatar avatar-lg">{{ c.first_name|slice:":1"|upper }}{{ c.last_name|slice:":1"|upper }}</span>
+  <div class="user-info"><h1 class="profile-name">{{ c.first_name }} {{ c.last_name }}</h1><div class="profile-meta"><span>{{ c.email }}</span><span>{{ c.region }}</span><span>Customer since {{ c.joined_at|date:"M Y" }}</span></div></div>
+  <span class="status status-{{ c.lifecycle }}">{{ c.get_lifecycle_display }}</span>
+</section>
+
+<div class="profile-layout section">
+  <div class="stack">
+    <section class="panel">
+      <div class="section-heading"><div><h2 class="section-title">Latest orders</h2><p class="section-subtitle">Purchase activity used by segment rules</p></div><span class="metric-icon"><svg class="icon"><use href="#i-orders"/></svg></span></div>
+      <div class="table-wrap"><table><thead><tr><th>Order</th><th>Date</th><th>Status</th><th>Total</th></tr></thead><tbody>
+        {% for o in orders %}<tr><td class="table-id">{{ o.id }}</td><td>{{ o.ordered_at|date:"M j, Y" }}</td><td><span class="status status-{{ o.status }}">{{ o.get_status_display }}</span></td><td>&#36;{{ o.total|floatformat:2 }}</td></tr>
+        {% empty %}<tr><td colspan="4"><div class="table-empty"><div class="empty-title">No orders recorded</div><div class="empty-copy">Purchase history will appear here.</div></div></td></tr>{% endfor %}
+      </tbody></table></div>
+    </section>
+    <section class="panel">
+      <div class="section-heading"><div><h2 class="section-title">Segment history</h2><p class="section-subtitle">Current and previous rule decisions</p></div><span class="metric-icon"><svg class="icon"><use href="#i-target"/></svg></span></div>
+      <ul class="timeline">{% for m in memberships %}<li class="timeline-item"><span class="timeline-dot"></span><div class="timeline-title">{{ m.segment.name }}{% if m.is_current %} <span class="status status-active">Current</span>{% endif %}</div><div class="timeline-meta">{{ m.assigned_at|date:"M j, Y · H:i" }} · score {{ m.score|floatformat:1 }}</div><p class="timeline-copy">{{ m.reason }}</p></li>
+      {% empty %}<li class="timeline-item"><span class="timeline-dot"></span><div class="timeline-title">Not yet segmented</div><div class="timeline-meta">Run a segmentation workflow to establish a rule-based profile.</div></li>{% endfor %}</ul>
+    </section>
+    <section class="panel">
+      <div class="section-heading"><div><h2 class="section-title">Action history</h2><p class="section-subtitle">Recommendations and outcomes for this customer</p></div></div>
+      <ul class="timeline">{% for a in actions %}<li class="timeline-item"><span class="timeline-dot"></span><div class="timeline-title">{{ a.action_snapshot.name|default:a.action.name }} <span class="status status-{{ a.status }}">{{ a.get_status_display }}</span></div><div class="timeline-meta">{{ a.recommended_at|date:"M j, Y · H:i" }} · {{ a.action.channel|title }}</div>{% if a.suppression_reason %}<p class="timeline-copy">{{ a.suppression_reason }}</p>{% endif %}</li>
+      {% empty %}<li class="timeline-item"><span class="timeline-dot"></span><div class="timeline-title">No action history</div><div class="timeline-meta">Recommended actions will be recorded here.</div></li>{% endfor %}</ul>
+    </section>
+  </div>
+  <aside class="stack">
+    <section class="panel">
+      <div class="section-heading"><div><h2 class="section-title">Customer details</h2><p class="section-subtitle">Profile and lifecycle</p></div></div>
+      <div class="detail-list"><div class="detail-row"><span>Customer ID</span><strong class="table-id">{{ c.id }}</strong></div><div class="detail-row"><span>Email</span><strong>{{ c.email }}</strong></div><div class="detail-row"><span>Region</span><strong>{{ c.region }}</strong></div><div class="detail-row"><span>Joined</span><strong>{{ c.joined_at|date:"F j, Y" }}</strong></div><div class="detail-row"><span>Lifecycle</span><strong>{{ c.get_lifecycle_display }}</strong></div></div>
+    </section>
+    <section class="panel">
+      <div class="section-heading"><div><h2 class="section-title">Channel consent</h2><p class="section-subtitle">Effective-dated contact preferences</p></div></div>
+      <div class="detail-list">{% for cns in c.consents.all %}<div class="detail-row"><span>{{ cns.channel|title }}<span class="table-secondary">From {{ cns.effective_from|date:"M j, Y" }}{% if cns.effective_to %} until {{ cns.effective_to|date:"M j, Y" }}{% endif %}</span></span>{% if cns.is_allowed %}<strong><span class="status status-recommended">Allowed</span></strong>{% else %}<strong><span class="status status-suppressed">Withdrawn</span></strong>{% endif %}</div>{% empty %}<div class="table-empty"><div class="empty-title">No consent records</div><div class="empty-copy">No active preference has been recorded.</div></div>{% endfor %}</div>
+    </section>
+    <section class="panel">
+      <div class="section-heading"><div><h2 class="section-title">Support cases</h2><p class="section-subtitle">Service issues and resolution history</p></div>{% if perms.segments.add_supportcase %}<a class="icon-button" href="{% url 'support_case_create' c.id %}" aria-label="Open support case" title="Open case"><svg class="icon"><use href="#i-arrow"/></svg></a>{% endif %}</div>
+      <ul class="timeline">{% for s in cases %}<li class="timeline-item"><span class="timeline-dot"></span><div class="timeline-title">{{ s.get_category_display }} <span class="status status-{{ s.status }}">{{ s.get_status_display }}</span></div><div class="timeline-meta">{{ s.id }} · {{ s.opened_at|date:"M j, Y" }}{% if s.service_cost %} · &#36;{{ s.service_cost|floatformat:2 }}{% endif %}</div>{% if s.description %}<p class="timeline-copy">{{ s.description }}</p>{% endif %}{% if perms.segments.change_supportcase %}<a class="button secondary button-sm" href="{% url 'support_case_transition' s.id %}">Update case</a>{% endif %}{% for event in s.events.all %}<p class="timeline-copy">{{ event.from_status|default:"Created" }} → {{ event.to_status }} · {{ event.changed_at|date:"M j, H:i" }}{% if event.notes %}<br>{{ event.notes }}{% endif %}</p>{% endfor %}</li>
+      {% empty %}<li class="timeline-item"><span class="timeline-dot"></span><div class="timeline-title">No support cases</div><div class="timeline-meta">Support history will appear here.</div></li>{% endfor %}</ul>
+    </section>
+  </aside>
+</div>
+{% endblock %}

@@ -1,0 +1,26 @@
+{
+  "status": "PASS",
+  "counts": {
+    "customers": 500,
+    "products": 5,
+    "orders": 2000,
+    "order_lines": 2000,
+    "engagement_events": 10000,
+    "support_cases": 10,
+    "consents": 1500,
+    "segment_rules": 6,
+    "memberships": 1002,
+    "action_catalog": 6,
+    "action_outcomes": 1502,
+    "action_outcome_events": 1502,
+    "support_case_events": 10
+  },
+  "issues": [],
+  "known_anomalies": {
+    "segment_conflicts": 2,
+    "consent_violations": 1,
+    "return_not_netted": 1,
+    "wrong_action_attribution": 1
+  },
+  "ground_truth_separate_from_features": true
+}

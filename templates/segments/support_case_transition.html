@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block title %}Support case · Signal Desk{% endblock %}
+{% block content %}
+<nav class="breadcrumb" aria-label="Breadcrumb"><a href="{% url 'customer_detail' case.customer_id %}">Customer {{ case.customer_id }}</a><svg class="icon"><use href="#i-arrow"/></svg><span>{{ case.id }}</span></nav>
+<section class="page-heading"><div class="page-heading-copy"><div class="eyebrow">Support case history</div><h1 class="title">Update case status</h1><p class="page-description">{{ case.get_category_display }} · opened {{ case.opened_at|date:"M j, Y" }} · service cost &#36;{{ case.service_cost|floatformat:2 }}</p></div><span class="status status-{{ case.status }}">{{ case.get_status_display }}</span></section>
+<div class="profile-layout">
+  <section class="panel">
+    <div class="section-heading"><div><h2 class="section-title">Case context</h2><p class="section-subtitle">Customer and issue details</p></div></div>
+    <div class="detail-list"><div class="detail-row"><span>Customer</span><strong><a href="{% url 'customer_detail' case.customer_id %}">{{ case.customer.first_name }} {{ case.customer.last_name }}</a></strong></div><div class="detail-row"><span>Case ID</span><strong class="table-id">{{ case.id }}</strong></div><div class="detail-row"><span>Category</span><strong>{{ case.get_category_display }}</strong></div><div class="detail-row"><span>Opened</span><strong>{{ case.opened_at|date:"M j, Y · H:i" }}</strong></div></div>
+    <p class="timeline-copy">{{ case.description }}</p>
+  </section>
+  <section class="panel">
+    <div class="section-heading"><div><h2 class="section-title">Record transition</h2><p class="section-subtitle">Reopening requires a note explaining why.</p></div></div>
+    <form method="post">{% csrf_token %}{{ form.non_field_errors }}
+      <div class="form-field"><label for="{{ form.to_status.id_for_label }}">Next status</label>{{ form.to_status }}{{ form.to_status.errors }}</div>
+      <div class="form-field"><label for="{{ form.notes.id_for_label }}">Reason or resolution note</label>{{ form.notes }}{{ form.notes.errors }}</div>
+      <div class="form-actions"><a class="button secondary" href="{% url 'customer_detail' case.customer_id %}">Cancel</a><button type="submit">Save case update <svg class="icon icon-sm"><use href="#i-check"/></svg></button></div>
+    </form>
+  </section>
+</div>
+<section class="section panel"><div class="section-heading"><div><h2 class="section-title">Case timeline</h2><p class="section-subtitle">Every status change and note</p></div></div><ul class="timeline">{% for event in case.events.all %}<li class="timeline-item"><span class="timeline-dot"></span><div class="timeline-title">{{ event.from_status|default:"Created" }} → {{ event.to_status }}</div><div class="timeline-meta">{{ event.changed_at|date:"M j, Y · H:i" }}{% if event.actor_label %} · {{ event.actor_label }}{% endif %}</div>{% if event.notes %}<p class="timeline-copy">{{ event.notes }}</p>{% endif %}</li>{% empty %}<li class="timeline-item"><span class="timeline-dot"></span><div class="timeline-title">No case history</div></li>{% endfor %}</ul></section>
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block title %}Open support case · Signal Desk{% endblock %}
+{% block content %}
+<nav class="breadcrumb" aria-label="Breadcrumb"><a href="{% url 'customers' %}">Customers</a><svg class="icon"><use href="#i-arrow"/></svg><a href="{% url 'customer_detail' customer.id %}">{{ customer.id }}</a><svg class="icon"><use href="#i-arrow"/></svg><span>New case</span></nav>
+<section class="page-heading"><div class="page-heading-copy"><div class="eyebrow">Support workspace</div><h1 class="title">Open a support case</h1><p class="page-description">Create a traceable service record for {{ customer.first_name }} {{ customer.last_name }}.</p></div></section>
+<section class="panel form-card">
+  <form method="post">{% csrf_token %}{{ form.non_field_errors }}
+    <div class="form-field"><label for="{{ form.category.id_for_label }}">Case category</label>{{ form.category }}{{ form.category.errors }}</div>
+    <div class="form-field"><label for="{{ form.description.id_for_label }}">What happened?</label>{{ form.description }}<p class="form-help">This note becomes part of the permanent case history.</p>{{ form.description.errors }}</div>
+    <div class="form-field"><label for="{{ form.service_cost.id_for_label }}">Initial service cost</label>{{ form.service_cost }}<p class="form-help">Enter the estimated cost in USD, or leave it at zero.</p>{{ form.service_cost.errors }}</div>
+    <div class="form-actions"><a class="button secondary" href="{% url 'customer_detail' customer.id %}">Cancel</a><button type="submit">Create support case <svg class="icon icon-sm"><use href="#i-arrow"/></svg></button></div>
+  </form>
+</section>
+{% endblock %}
