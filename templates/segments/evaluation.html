@@ -1,16 +1,16 @@
 {% extends 'base.html' %}
-{% block title %}Evaluation · Signal Desk{% endblock %}
+{% block title %}Evaluation · Customer Signals{% endblock %}
 {% block content %}
 <section class="page-heading">
   <div class="page-heading-copy"><div class="eyebrow"><svg class="icon icon-sm"><use href="#i-chart"/></svg>Measurement</div><h1 class="title">Action evaluation</h1><p class="page-description">Understand how recommended actions move through delivery and conversion. Suppressed records stay visible and outside the conversion denominator.</p></div>
   <div class="actions"><a class="button" href="{% url 'export_data' 'actions' %}"><svg class="icon icon-sm"><use href="#i-download"/></svg>Export action log</a></div>
 </section>
 <section class="grid" aria-label="Evaluation metrics">
-  <article class="card metric-card"><div class="metric-top"><span class="metric-label">Recommendations</span><span class="metric-icon"><svg class="icon"><use href="#i-spark"/></svg></span></div><strong class="metric">{{ metrics.recommendations }}</strong><div class="metric-foot">Anomalies excluded from metrics</div></article>
-  <article class="card metric-card accent-blue"><div class="metric-top"><span class="metric-label">Sent</span><span class="metric-icon"><svg class="icon"><use href="#i-arrow"/></svg></span></div><strong class="metric">{{ metrics.sent }}</strong><div class="metric-foot">Accepted or awaiting outcome</div></article>
-  <article class="card metric-card accent-yellow"><div class="metric-top"><span class="metric-label">Conversions</span><span class="metric-icon"><svg class="icon"><use href="#i-target"/></svg></span></div><strong class="metric">{{ metrics.conversions }}</strong><div class="metric-foot">{{ metrics.conversion_rate|floatformat:1 }}% of sent actions</div></article>
-  <article class="card metric-card accent-purple"><div class="metric-top"><span class="metric-label">Attributed revenue</span><span class="metric-icon"><svg class="icon"><use href="#i-orders"/></svg></span></div><strong class="metric">&#36;{{ metrics.attributed_revenue|floatformat:2 }}</strong><div class="metric-foot">Recorded conversion value</div></article>
-  <article class="card metric-card accent-red"><div class="metric-top"><span class="metric-label">Suppressed</span><span class="metric-icon"><svg class="icon"><use href="#i-check"/></svg></span></div><strong class="metric">{{ metrics.suppressed }}</strong><div class="metric-foot">Consent and cooldown holds</div></article>
+  <article class="card metric-card"><div class="metric-top"><span class="metric-label">Recommendations</span><span class="metric-icon"><svg class="icon"><use href="#i-chart"/></svg></span></div><strong class="metric">{{ metrics.recommendations }}</strong><div class="metric-foot">Anomalies excluded from metrics</div></article>
+  <article class="card metric-card"><div class="metric-top"><span class="metric-label">Sent</span><span class="metric-icon"><svg class="icon"><use href="#i-arrow"/></svg></span></div><strong class="metric">{{ metrics.sent }}</strong><div class="metric-foot">Accepted or awaiting outcome</div></article>
+  <article class="card metric-card"><div class="metric-top"><span class="metric-label">Conversions</span><span class="metric-icon"><svg class="icon"><use href="#i-target"/></svg></span></div><strong class="metric">{{ metrics.conversions }}</strong><div class="metric-foot">{{ metrics.conversion_rate|floatformat:1 }}% of sent actions</div></article>
+  <article class="card metric-card"><div class="metric-top"><span class="metric-label">Attributed revenue</span><span class="metric-icon"><svg class="icon"><use href="#i-orders"/></svg></span></div><strong class="metric">&#36;{{ metrics.attributed_revenue|floatformat:2 }}</strong><div class="metric-foot">Recorded conversion value</div></article>
+  <article class="card metric-card"><div class="metric-top"><span class="metric-label">Suppressed</span><span class="metric-icon"><svg class="icon"><use href="#i-check"/></svg></span></div><strong class="metric">{{ metrics.suppressed }}</strong><div class="metric-foot">Consent and cooldown holds</div></article>
 </section>
 <section class="section panel">
   <div class="section-heading"><div><h2 class="section-title">Action journey</h2><p class="section-subtitle">From recommendation to recorded conversion</p></div></div>
@@ -19,8 +19,8 @@
     {% widthratio metrics.sent metrics.recommendations 100 as sent_pct %}
     {% widthratio metrics.conversions metrics.recommendations 100 as conversion_pct %}
     <div class="chart-row"><span class="chart-label">Recommended</span><span class="chart-track"><span class="chart-fill" style="--bar:{{ recommendation_pct }}%"></span></span><span class="chart-value">{{ metrics.recommendations }}</span></div>
-    <div class="chart-row"><span class="chart-label">Sent</span><span class="chart-track"><span class="chart-fill" style="--bar:{{ sent_pct }}%;--bar-color:var(--blue)"></span></span><span class="chart-value">{{ metrics.sent }}</span></div>
-    <div class="chart-row"><span class="chart-label">Converted</span><span class="chart-track"><span class="chart-fill" style="--bar:{{ conversion_pct }}%;--bar-color:var(--yellow)"></span></span><span class="chart-value">{{ metrics.conversions }}</span></div>
+    <div class="chart-row"><span class="chart-label">Sent</span><span class="chart-track"><span class="chart-fill" style="--bar:{{ sent_pct }}%"></span></span><span class="chart-value">{{ metrics.sent }}</span></div>
+    <div class="chart-row"><span class="chart-label">Converted</span><span class="chart-track"><span class="chart-fill" style="--bar:{{ conversion_pct }}%"></span></span><span class="chart-value">{{ metrics.conversions }}</span></div>
   </div>
 </section>
 <section class="section" id="action-log">

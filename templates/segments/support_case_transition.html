@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% block title %}Support case · Signal Desk{% endblock %}
+{% block title %}Support case · Customer Signals{% endblock %}
 {% block content %}
 <nav class="breadcrumb" aria-label="Breadcrumb"><a href="{% url 'customer_detail' case.customer_id %}">Customer {{ case.customer_id }}</a><svg class="icon"><use href="#i-arrow"/></svg><span>{{ case.id }}</span></nav>
 <section class="page-heading"><div class="page-heading-copy"><div class="eyebrow">Support case history</div><h1 class="title">Update case status</h1><p class="page-description">{{ case.get_category_display }} · opened {{ case.opened_at|date:"M j, Y" }} · service cost &#36;{{ case.service_cost|floatformat:2 }}</p></div><span class="status status-{{ case.status }}">{{ case.get_status_display }}</span></section>

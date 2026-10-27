@@ -1,8 +1,8 @@
 {% extends 'base.html' %}
-{% block title %}Update action · Signal Desk{% endblock %}
+{% block title %}Update action · Customer Signals{% endblock %}
 {% block content %}
 <nav class="breadcrumb" aria-label="Breadcrumb"><a href="{% url 'evaluation' %}#action-log">Evaluation</a><svg class="icon"><use href="#i-arrow"/></svg><span>{{ outcome.id }}</span></nav>
-<section class="page-heading"><div class="page-heading-copy"><div class="eyebrow"><svg class="icon icon-sm"><use href="#i-spark"/></svg>Audited action</div><h1 class="title">Update recommendation</h1><p class="page-description">Record the next step in this action’s lifecycle. Every change is retained with its actor, time, and notes.</p></div><span class="status status-{{ outcome.status }}">{{ outcome.get_status_display }}</span></section>
+<section class="page-heading"><div class="page-heading-copy"><div class="eyebrow">Action history</div><h1 class="title">Update recommendation</h1><p class="page-description">Record the next state and add operational notes.</p></div><span class="status status-{{ outcome.status }}">{{ outcome.get_status_display }}</span></section>
 <div class="profile-layout">
   <section class="panel">
     <div class="section-heading"><div><h2 class="section-title">Action details</h2><p class="section-subtitle">Frozen recommendation context</p></div></div>

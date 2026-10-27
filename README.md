@@ -2,7 +2,7 @@
 
 Django customer segmentation and action workflow with explainable purchase, engagement and service signals; effective-dated consent; action suppression; audited outcome transitions; data validation; synthetic-data generation; and streamed exports.
 
-See [UI_STYLE_GUIDE.md](UI_STYLE_GUIDE.md) for the Signal Desk design tokens, components, typography, and motion rules.
+See [UI_STYLE_GUIDE.md](UI_STYLE_GUIDE.md) for the Customer Signals design tokens, components, typography, and motion rules.
 
 ## Local development
 

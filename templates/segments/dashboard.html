@@ -1,29 +1,29 @@
 {% extends 'base.html' %}
-{% block title %}Overview · Signal Desk{% endblock %}
+{% block title %}Overview · Customer Signals{% endblock %}
 {% block content %}
 <section class="page-heading">
   <div class="page-heading-copy">
-    <div class="eyebrow"><svg class="icon icon-sm"><use href="#i-spark"/></svg>Decision workspace</div>
-    <h1 class="title">Good work starts with a clear signal.</h1>
-    <p class="page-description">Customer segments, consent-aware actions, and measurable outcomes—together in one place.</p>
+    <div class="eyebrow">Customer operations</div>
+    <h1 class="title">Overview</h1>
+    <p class="page-description">Monitor customer segments, recommendation activity, and outcomes.</p>
   </div>
   <div class="actions">
     {% if perms.segments.run_segmentation %}<form method="post" action="{% url 'actions' %}">{% csrf_token %}<input type="hidden" name="operation" value="segment"><button type="submit"><svg class="icon icon-sm"><use href="#i-target"/></svg>Rebuild segments</button></form>{% endif %}
-    {% if perms.segments.run_recommendations %}<form method="post" action="{% url 'actions' %}">{% csrf_token %}<input type="hidden" name="operation" value="recommend"><button class="button secondary" type="submit"><svg class="icon icon-sm"><use href="#i-spark"/></svg>Run recommendations</button></form>{% endif %}
+    {% if perms.segments.run_recommendations %}<form method="post" action="{% url 'actions' %}">{% csrf_token %}<input type="hidden" name="operation" value="recommend"><button class="button secondary" type="submit"><svg class="icon icon-sm"><use href="#i-chart"/></svg>Run recommendations</button></form>{% endif %}
   </div>
 </section>
 
 <section class="grid" aria-label="Workspace metrics">
   <article class="card metric-card"><div class="metric-top"><span class="metric-label">Customers</span><span class="metric-icon"><svg class="icon"><use href="#i-users"/></svg></span></div><strong class="metric">{{ customers|default:0 }}</strong><div class="metric-foot">Profiles in this workspace</div></article>
   {% if perms.segments.view_actionoutcome %}
-  <article class="card metric-card accent-blue"><div class="metric-top"><span class="metric-label">Action records</span><span class="metric-icon"><svg class="icon"><use href="#i-spark"/></svg></span></div><strong class="metric">{{ metrics.recommendations|default:0 }}</strong><div class="metric-foot">Recommendations and decisions</div></article>
-  <article class="card metric-card accent-yellow"><div class="metric-top"><span class="metric-label">Conversion rate</span><span class="metric-icon"><svg class="icon"><use href="#i-target"/></svg></span></div><strong class="metric">{{ metrics.conversion_rate|floatformat:1 }}%</strong><div class="metric-foot">Of actions marked sent</div></article>
-  <article class="card metric-card accent-purple"><div class="metric-top"><span class="metric-label">Attributed revenue</span><span class="metric-icon"><svg class="icon"><use href="#i-orders"/></svg></span></div><strong class="metric">&#36;{{ metrics.attributed_revenue|floatformat:2 }}</strong><div class="metric-foot">From recorded conversions</div></article>
-  <article class="card metric-card accent-red"><div class="metric-top"><span class="metric-label">Suppressed</span><span class="metric-icon"><svg class="icon"><use href="#i-check"/></svg></span></div><strong class="metric">{{ metrics.suppressed|default:0 }}</strong><div class="metric-foot">Held by consent or cooldown rules</div></article>
+  <article class="card metric-card"><div class="metric-top"><span class="metric-label">Action records</span><span class="metric-icon"><svg class="icon"><use href="#i-chart"/></svg></span></div><strong class="metric">{{ metrics.recommendations|default:0 }}</strong><div class="metric-foot">Recommendations and decisions</div></article>
+  <article class="card metric-card"><div class="metric-top"><span class="metric-label">Conversion rate</span><span class="metric-icon"><svg class="icon"><use href="#i-target"/></svg></span></div><strong class="metric">{{ metrics.conversion_rate|floatformat:1 }}%</strong><div class="metric-foot">Of actions marked sent</div></article>
+  <article class="card metric-card"><div class="metric-top"><span class="metric-label">Attributed revenue</span><span class="metric-icon"><svg class="icon"><use href="#i-orders"/></svg></span></div><strong class="metric">&#36;{{ metrics.attributed_revenue|floatformat:2 }}</strong><div class="metric-foot">From recorded conversions</div></article>
+  <article class="card metric-card"><div class="metric-top"><span class="metric-label">Suppressed</span><span class="metric-icon"><svg class="icon"><use href="#i-check"/></svg></span></div><strong class="metric">{{ metrics.suppressed|default:0 }}</strong><div class="metric-foot">Held by consent or cooldown rules</div></article>
   {% endif %}
 </section>
 
-<section class="dashboard-grid section">
+<section class="section">
   <article class="panel">
     <div class="section-heading">
       <div><h2 class="section-title">Current segment mix</h2><p class="section-subtitle">Customer distribution across active rules</p></div>
@@ -39,14 +39,6 @@
     </div>
     <div class="chart-legend"><span class="legend-item"><span class="legend-dot"></span>Current customers</span><span>Bar length shows share of all customers</span></div>
   </article>
-  <aside class="panel insight-panel">
-    <div>
-      <span class="insight-icon"><svg class="icon"><use href="#i-spark"/></svg></span>
-      <h3>Explain every decision.</h3>
-      <p>Each segment and action keeps the rule snapshot, consent decision, and outcome history behind it.</p>
-    </div>
-    <div class="insight-bottom"><span class="status-dot"></span>Consent checks run before every send</div>
-  </aside>
 </section>
 
 <section class="section">
@@ -67,7 +59,7 @@
     <thead><tr><th>Customer</th><th>Action</th><th>Created</th><th>Status</th><th>Decision</th></tr></thead>
     <tbody>
       {% for x in recent %}<tr><td><a class="table-primary" href="{% url 'customer_detail' x.customer_id %}">{{ x.customer_id }}</a></td><td>{{ x.action.name }}</td><td>{{ x.recommended_at|date:"M j, Y · H:i" }}</td><td><span class="status status-{{ x.status }}">{{ x.get_status_display }}</span></td><td>{% if x.suppression_reason %}<span class="muted">{{ x.suppression_reason }}</span>{% else %}<span class="muted">Eligible</span>{% endif %}</td></tr>
-      {% empty %}<tr><td colspan="5"><div class="table-empty"><span class="empty-icon"><svg class="icon"><use href="#i-spark"/></svg></span><div class="empty-title">No recommendations yet</div><div class="empty-copy">Your latest decisions will appear here.</div></div></td></tr>{% endfor %}
+      {% empty %}<tr><td colspan="5"><div class="table-empty"><span class="empty-icon"><svg class="icon"><use href="#i-chart"/></svg></span><div class="empty-title">No recommendations yet</div><div class="empty-copy">Your latest decisions will appear here.</div></div></td></tr>{% endfor %}
     </tbody>
   </table></div>
 </section>

@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% block title %}{{ c.first_name }} {{ c.last_name }} · Signal Desk{% endblock %}
+{% block title %}{{ c.first_name }} {{ c.last_name }} · Customer Signals{% endblock %}
 {% block content %}
 <nav class="breadcrumb" aria-label="Breadcrumb"><a href="{% url 'customers' %}">Customers</a><svg class="icon"><use href="#i-arrow"/></svg><span>{{ c.id }}</span></nav>
 <section class="card profile-hero">

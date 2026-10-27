@@ -1,20 +1,22 @@
 (() => {
   const root = document.documentElement;
   const themeButton = document.querySelector("[data-theme-toggle]");
-  const themeIcon = themeButton?.querySelector("use");
+  const themeLabel = themeButton?.querySelector("[data-theme-label]");
+  const themeMeta = document.querySelector('meta[name="theme-color"]');
 
   const applyTheme = (theme) => {
-    root.dataset.theme = theme;
-    if (themeIcon) themeIcon.setAttribute("href", theme === "dark" ? "#i-sun" : "#i-moon");
-    if (themeButton) {
-      const label = theme === "dark" ? "Switch to light theme" : "Switch to dark theme";
-      themeButton.setAttribute("aria-label", label);
-      themeButton.title = label;
-    }
+    const dark = theme === "dark";
+    root.dataset.theme = dark ? "dark" : "light";
+    if (themeMeta) themeMeta.content = dark ? "#111916" : "#f5f7f6";
+    if (!themeButton) return;
+    themeButton.setAttribute("aria-pressed", String(dark));
+    themeButton.setAttribute("aria-label", dark ? "Switch to light mode" : "Switch to dark mode");
+    if (themeLabel) themeLabel.textContent = dark ? "Light mode" : "Dark mode";
   };
 
   try {
-    applyTheme(localStorage.getItem("signal-desk-theme") || "light");
+    const saved = localStorage.getItem("customer-signals-theme") || localStorage.getItem("signal-desk-theme");
+    applyTheme(saved === "dark" ? "dark" : "light");
   } catch {
     applyTheme("light");
   }
@@ -22,7 +24,7 @@
   themeButton?.addEventListener("click", () => {
     const next = root.dataset.theme === "dark" ? "light" : "dark";
     applyTheme(next);
-    try { localStorage.setItem("signal-desk-theme", next); } catch {}
+    try { localStorage.setItem("customer-signals-theme", next); } catch {}
   });
 
   const sidebar = document.getElementById("sidebar");
@@ -36,7 +38,7 @@
   menuButton?.addEventListener("click", () => {
     const open = sidebar?.classList.toggle("open");
     overlay?.classList.toggle("visible", Boolean(open));
-    menuButton.setAttribute("aria-expanded", String(Boolean(open)));
+    menuButton?.setAttribute("aria-expanded", String(Boolean(open)));
   });
   overlay?.addEventListener("click", closeMenu);
   document.addEventListener("keydown", (event) => {

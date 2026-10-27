@@ -1,7 +1,26 @@
 {% extends "admin/base.html" %}
 {% load static %}
-{% block title %}{{ title }} | Signal Desk{% endblock %}
-{% block branding %}
-<h1 id="site-name"><a href="{% url 'admin:index' %}"><span class="admin-brand-mark" aria-hidden="true"></span><span>Signal Desk</span><small>Administration</small></a></h1>
+{% block title %}{{ title }} | Customer Signals{% endblock %}
+{% block dark-mode-vars %}
+<link rel="stylesheet" href="{% static 'admin/css/dark_mode.css' %}">
+<meta name="theme-color" content="#f5f7f6">
+<script>
+  try {
+    const savedTheme = localStorage.getItem("customer-signals-theme") || localStorage.getItem("signal-desk-theme");
+    document.documentElement.dataset.theme = savedTheme === "dark" ? "dark" : "light";
+  } catch {
+    document.documentElement.dataset.theme = "light";
+  }
+</script>
 {% endblock %}
-{% block extrastyle %}{{ block.super }}<link rel="stylesheet" href="{% static 'segments/admin.css' %}">{% endblock %}
+{% block branding %}
+<h1 id="site-name"><a href="{% url 'dashboard' %}"><span>Customer Signals</span><small>Admin</small></a></h1>
+{% endblock %}
+{% block usertools %}
+<div class="admin-header-tools">
+  <button class="theme-switch" type="button" data-theme-toggle aria-label="Toggle dark mode" aria-pressed="false"><span class="theme-track" aria-hidden="true"><span></span></span><span data-theme-label>Dark mode</span></button>
+  {{ block.super }}
+</div>
+{% endblock %}
+{% block extrastyle %}{{ block.super }}<link rel="stylesheet" href="{% static 'segments/theme.css' %}"><link rel="stylesheet" href="{% static 'segments/admin.css' %}">{% endblock %}
+{% block extrahead %}{{ block.super }}<script defer src="{% static 'segments/app.js' %}"></script>{% endblock %}

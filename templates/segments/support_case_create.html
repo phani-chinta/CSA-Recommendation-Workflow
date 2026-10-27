@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% block title %}Open support case · Signal Desk{% endblock %}
+{% block title %}Open support case · Customer Signals{% endblock %}
 {% block content %}
 <nav class="breadcrumb" aria-label="Breadcrumb"><a href="{% url 'customers' %}">Customers</a><svg class="icon"><use href="#i-arrow"/></svg><a href="{% url 'customer_detail' customer.id %}">{{ customer.id }}</a><svg class="icon"><use href="#i-arrow"/></svg><span>New case</span></nav>
 <section class="page-heading"><div class="page-heading-copy"><div class="eyebrow">Support workspace</div><h1 class="title">Open a support case</h1><p class="page-description">Create a traceable service record for {{ customer.first_name }} {{ customer.last_name }}.</p></div></section>

@@ -6,10 +6,9 @@
 {% block content %}
 <div class="admin-login-shell">
   <section class="admin-login-card">
-    <div class="admin-login-orbit" aria-hidden="true"><span></span><span></span><span></span></div>
     <div class="admin-kicker">SECURE ADMINISTRATION</div>
-    <h1>Welcome back</h1>
-    <p class="admin-login-copy">Sign in to manage the Signal Desk workspace.</p>
+    <h1>Admin sign in</h1>
+    <p class="admin-login-copy">Use your staff account to continue.</p>
     {% if form.errors and not form.non_field_errors %}<p class="admin-error" role="alert">Please correct the highlighted fields.</p>{% endif %}
     {% if form.non_field_errors %}<div class="admin-error" role="alert">{{ form.non_field_errors }}</div>{% endif %}
     <form action="{{ app_path }}" method="post" id="login-form">{% csrf_token %}
@@ -18,7 +17,7 @@
       <input type="hidden" name="next" value="{{ next }}">
       <button type="submit" class="admin-login-button">Sign in <span aria-hidden="true">→</span></button>
     </form>
-    <div class="admin-login-foot"><span class="admin-lock" aria-hidden="true">◆</span>Authorized workspace access</div>
+    <div class="admin-login-foot">Authorized staff access</div>
   </section>
 </div>
 {% endblock %}

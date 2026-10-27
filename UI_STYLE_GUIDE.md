@@ -1,41 +1,41 @@
-# Signal Desk UI style guide
+# Customer Signals UI style guide
 
-Signal Desk uses a small, consistent design system for the Django workspace and admin console. It takes cues from Google’s clear data hierarchy, Apple’s restrained spacing and surfaces, and NVIDIA’s confident green accent, while keeping its own brand and layouts.
+Customer Signals uses a restrained operations interface: clear hierarchy, neutral surfaces, one muted green accent, and compact data views. The system avoids decorative logos, novelty marks, gradients, and nonessential motion.
 
 ## Design tokens
 
 | Figma token | CSS variable | Light value | Purpose |
 |---|---|---|---|
-| `color/text/primary` | `--ink` | `#14211d` | Headings, key values |
-| `color/text/secondary` | `--muted` | `#71817b` | Supporting text, timestamps |
-| `color/surface/page` | `--paper` | `#f4f7f5` | App canvas |
+| `color/text/primary` | `--ink` | `#1c2923` | Headings, key values |
+| `color/text/secondary` | `--muted` | `#718078` | Supporting text, timestamps |
+| `color/surface/page` | `--paper` | `#f5f7f6` | App canvas |
 | `color/surface/card` | `--surface` | `#ffffff` | Cards, forms, tables |
-| `color/border/subtle` | `--line` | `#e4ebe7` | Dividers and outlines |
-| `color/brand/primary` | `--green` | `#76b900` | Primary actions, chart series |
-| `color/data/blue` | `--blue` | `#4285f4` | Secondary series and links |
-| `color/data/yellow` | `--yellow` | `#f4b400` | Conversion and attention states |
+| `color/border/subtle` | `--line` | `#e3e8e5` | Dividers and outlines |
+| `color/brand/primary` | `--green` | `#2f6b4f` | Primary actions, chart series |
+| `color/data/blue` | `--blue` | `#5279a5` | Links and secondary status |
+| `color/data/yellow` | `--yellow` | `#98712e` | Conversion and attention states |
 | `radius/control` | `--radius-sm` | `10px` | Inputs, small controls |
 | `radius/card` | `--radius` | `16px` | Cards and panels |
 | `radius/feature` | `--radius-lg` | `22px` | Feature surfaces |
 | `space/2`–`space/8` | `--space-2`–`--space-8` | `8px`–`32px` | Layout rhythm |
 | `elevation/card` | `--shadow-card` | soft, layered shadow | Quiet separation from canvas |
 
-Dark mode maps the same semantic tokens to dark surfaces and accessible contrast; users can switch themes from the top bar. Typography uses Inter when installed, then SF Pro, Segoe UI, and system fonts. No remote font or icon request is required.
+Dark mode maps the same semantic tokens to dark surfaces; the same labeled switch and saved preference are shared by the workspace and admin header. Typography uses Inter when installed, then SF Pro, Segoe UI, and system fonts. No remote font or icon request is required.
 
 ## Components
 
-- **Navigation:** persistent desktop sidebar, compact mobile drawer, active-page state, account controls.
-- **Actions:** one strong green primary action, white secondary actions, clear disabled/focus states.
-- **Metrics:** compact numeric cards with a single category icon and restrained color tint.
-- **Charts:** labeled horizontal bar charts for segment mix and action progression; colors are repeated consistently and values remain visible.
+- **Navigation:** persistent desktop sidebar, compact mobile drawer, active-page state, account controls, and a text-only wordmark.
+- **Actions:** one muted-green primary action, white secondary actions, clear focus states.
+- **Metrics:** compact numeric cards with restrained outline icons and no decorative color treatments.
+- **Charts:** labeled horizontal bar charts for segment mix and action progression; one consistent series color and visible values.
 - **Tables:** quiet headers, readable IDs, status chips, row hover, empty states, and horizontal scrolling on narrow screens.
 - **Forms:** explicit labels, field-level error placement, clear helper text, and aligned cancel/save actions.
 - **History:** vertical timeline for support and action events.
-- **Admin:** matching Signal Desk header, custom sign-in surface, and coordinated controls while retaining Django’s admin workflows.
+- **Admin:** matching Customer Signals header, a simple sign-in surface, and coordinated controls while retaining Django’s admin workflows.
 
 ## Motion and accessibility
 
-Page content enters with a short fade and lift; charts grow from the left; buttons and cards lift slightly on hover. `prefers-reduced-motion` disables those transitions. Icons are local inline SVG symbols with consistent stroke weight and accessible labels. Keyboard focus remains visible, and charts include text labels and values so color is never the only signal.
+Only chart bars animate briefly when first shown. Hover states use subtle color changes without lifting or scaling cards. `prefers-reduced-motion` disables transitions. Functional icons are simple line symbols with accessible labels; there is no decorative SVG logo. Keyboard focus remains visible, and charts include labels and values so color is never the only signal.
 
 ## Implementation
 
